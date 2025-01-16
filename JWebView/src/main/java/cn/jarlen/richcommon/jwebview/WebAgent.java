@@ -11,13 +11,15 @@ import android.webkit.WebView;
 import com.google.gson.Gson;
 
 import java.lang.ref.WeakReference;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import cn.jarlen.richcommon.jwebview.client.AbsJsInterfaceHolderImpl;
 import cn.jarlen.richcommon.jwebview.client.IWebView;
 import cn.jarlen.richcommon.jwebview.client.JsInterfaceHolder;
-import cn.jarlen.richcommon.jwebview.entity.CallBackBean;
+import cn.jarlen.richcommon.jwebview.entity.NativeCall2JsBean;
 import cn.jarlen.richcommon.jwebview.entity.location.GpsLocationResult;
 import cn.jarlen.richcommon.jwebview.entity.toolbar.ChangeToolbarParams;
 import cn.jarlen.richcommon.jwebview.lifecycle.WebViewLifeCycleManager;
@@ -28,6 +30,17 @@ import cn.jarlen.richcommon.jwebview.util.ThreadUtils;
 import cn.jarlen.richcommon.jwebview.util.WebUtil;
 
 public class WebAgent implements IWebView {
+
+    /*Begin: 注册事件集合*/
+    private Set<String> eventSet = new HashSet<>();
+    private static final String EVENT_BACK = "onBack";
+    private static final String EVENT_MENU_CLICK = "onMenuClick";
+    private static final String EVENT_ON_RESUME = "onResume";
+    private static final String EVENT_ON_PAUSE = "onPause";
+    private static final String EVENT_RECEIVE_PUSH_MSG = "receivePushMsg";
+    private static final String EVENT_ON_WEB_CLOSE = "onWebClose";
+    private static final String EVENT_RECEIVE_LOCATION = "onReceiveLocation";
+    /*End: 注册事件集合*/
 
     private Gson gson = new Gson();
 
@@ -48,10 +61,11 @@ public class WebAgent implements IWebView {
     /*页面周期管理类*/
 
     /*界面结果监听*/
-    private IMainFrameListener mFrameListener;
-
+    private MainFrameListener mFrameListener;
 
     private IWebViewSettings webViewSettings;
+
+    private String mCurrentUrl;
 
     public WebAgent(Activity activity) {
         this.activityWeakReference = new WeakReference<>(activity);
@@ -73,7 +87,7 @@ public class WebAgent implements IWebView {
         return this;
     }
 
-    public WebAgent setFrameListener(IMainFrameListener frameListener) {
+    public WebAgent setFrameListener(MainFrameListener frameListener) {
         this.mFrameListener = frameListener;
         return this;
     }
@@ -106,7 +120,7 @@ public class WebAgent implements IWebView {
     }
 
     @Override
-    public void callJs(CallBackBean resp) {
+    public void callJs(NativeCall2JsBean resp) {
         Activity activity = activityWeakReference.get();
         if (activity == null || activity.isFinishing()) {
             return;
@@ -188,7 +202,7 @@ public class WebAgent implements IWebView {
 
     @Override
     public void onProgress(WebView view, int newProgress) {
-        if (webIndicator == null){
+        if (webIndicator == null) {
             return;
         }
         if (newProgress == 0) {
@@ -215,6 +229,16 @@ public class WebAgent implements IWebView {
 
     @Override
     public boolean back() {
+        if (mFrameListener != null && mFrameListener.isForceBackClose()) {
+            return false;
+        }
+        if (sendEvent(EVENT_BACK, "")) {
+            return true;
+        }
+        if (currentWebView.canGoBack()) {
+            currentWebView.goBack();
+            return true;
+        }
         return false;
     }
 
@@ -225,7 +249,10 @@ public class WebAgent implements IWebView {
 
     @Override
     public void onShowMainFrame() {
-
+        if (mFrameListener == null) {
+            return;
+        }
+        mFrameListener.onShowMainFrame();
     }
 
     @Override
@@ -235,7 +262,7 @@ public class WebAgent implements IWebView {
 
     @Override
     public String getCurrentUrl() {
-        return null;
+        return mCurrentUrl;
     }
 
     @Override
@@ -265,17 +292,17 @@ public class WebAgent implements IWebView {
 
     @Override
     public boolean onClientJsConfirm(String url, String message, JsResult result) {
-        return false;
+        return mFrameListener != null ? mFrameListener.onClientJsConfirm(url, message, result) : Boolean.FALSE;
     }
 
     @Override
     public boolean onClientJsPrompt(String url, String message, String defaultValue, JsPromptResult result) {
-        return false;
+        return mFrameListener != null ? mFrameListener.onClientJsPrompt(url, message, defaultValue, result) : Boolean.FALSE;
     }
 
     @Override
     public boolean onClientShowFileChooser(ValueCallback valueCallbacks, WebChromeClient.FileChooserParams fileChooserParams) {
-        return false;
+        return mFrameListener != null ? mFrameListener.onClientShowFileChooser(valueCallbacks, fileChooserParams) : Boolean.FALSE;
     }
 
     @Override
@@ -291,5 +318,13 @@ public class WebAgent implements IWebView {
     @Override
     public void setMenu(List menuItems) {
 
+    }
+
+    private boolean sendEvent(String callback, Object result) {
+        if (eventSet.contains(callback)) {
+            callJs(NativeCall2JsBean.createEvent(callback, result));
+            return true;
+        }
+        return false;
     }
 }

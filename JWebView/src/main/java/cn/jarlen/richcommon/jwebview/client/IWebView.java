@@ -11,7 +11,7 @@ import android.webkit.WebView;
 import java.util.List;
 import java.util.Map;
 
-import cn.jarlen.richcommon.jwebview.entity.CallBackBean;
+import cn.jarlen.richcommon.jwebview.entity.NativeCall2JsBean;
 import cn.jarlen.richcommon.jwebview.entity.location.GpsLocationResult;
 import cn.jarlen.richcommon.jwebview.entity.toolbar.ChangeToolbarParams;
 import cn.jarlen.richcommon.jwebview.entity.toolbar.MenuItemBean;
@@ -24,7 +24,7 @@ public interface IWebView<D> {
      *
      * @param resp
      */
-    void callJs(CallBackBean resp);
+    void callJs(NativeCall2JsBean resp);
 
     /**
      * 添加事件监听，支持“back”，“menuclick”,“onPause”,“onResume”，“receivePushMsg”
