@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="common_widget_custom_dialog_title" tools:ignore="MissingTranslation">温馨提示</string>
+    <string name="common_widget_ok" tools:ignore="MissingTranslation">确定</string>
+    <string name="common_widget_cancel" tools:ignore="MissingTranslation">取消</string>
+
+    <string name="common_widget_hint" tools:ignore="MissingTranslation">提示</string>
+    <string name="common_widget_no" tools:ignore="MissingTranslation">否</string>
+    <string name="common_widget_yes" tools:ignore="MissingTranslation">是</string>
+
+</resources>

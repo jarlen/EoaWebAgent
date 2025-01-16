@@ -1,0 +1,37 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/top_view"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_alignParentTop="true"
+        android:minHeight="1px" />
+
+    <cn.jarlen.richcommon.widget.toolbar.CommonToolBar
+        android:id="@+id/toolbar_web"
+        style="@style/common_widget_toolbar_normal"
+        android:layout_below="@+id/top_view"
+        android:layout_alignParentTop="true" />
+
+    <FrameLayout
+        android:id="@+id/layout_web"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar_web">
+
+        <WebView
+            android:id="@+id/view_web"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none" />
+    </FrameLayout>
+
+    <cn.jarlen.richcommon.jwebview.ui.DefaultWebIndicator
+        android:id="@+id/web_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
+</RelativeLayout>

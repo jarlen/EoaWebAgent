@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <cn.jarlen.richcommon.widget.toolbar.ToolbarButton
+        android:id="@+id/toolbar_left_first_btn"
+        style="@style/common_widget_toolbar_left_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <cn.jarlen.richcommon.widget.toolbar.ToolbarButton
+        android:id="@+id/toolbar_left_second_btn"
+        style="@style/common_widget_toolbar_left_button"
+        app:layout_constraintStart_toEndOf="@+id/toolbar_left_first_btn"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <cn.jarlen.richcommon.widget.toolbar.ToolbarButton
+        android:id="@+id/toolbar_right_first_btn"
+        style="@style/common_widget_toolbar_right_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <cn.jarlen.richcommon.widget.toolbar.ToolbarButton
+        android:id="@+id/toolbar_right_second_btn"
+        style="@style/common_widget_toolbar_right_button"
+        app:layout_constraintEnd_toStartOf="@id/toolbar_right_first_btn"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_widget_toolbar_height"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:textColor="@color/common_widget_toolbar_title_text_color"
+        android:textSize="@dimen/common_widget_toolbar_title_text_size"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/toolbar_divider"
+        style="@style/ToolbarDivider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

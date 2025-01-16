@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="common_widget_toolbar_normal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/common_widget_toolbar_height</item>
+        <item name="android:minHeight">@dimen/common_widget_toolbar_height</item>
+        <item name="titleCenter">true</item>
+        <item name="leftFirstIcon">@drawable/common_widget_ic_toolbar_back</item>
+        <item name="titleColor">@color/common_widget_toolbar_title_text_color</item>
+        <item name="android:background">@color/common_widget_toolbar_normal_bg_color</item>
+        <item name="dividerIsShown">false</item>
+    </style>
+
+    <style name="common_widget_toolbar_transform">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/common_widget_toolbar_height</item>
+        <item name="android:minHeight">@dimen/common_widget_toolbar_height</item>
+        <item name="titleColor">@color/common_widget_toolbar_title_text_color_C3_1</item>
+        <item name="dividerIsShown">false</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="ToolbarDivider" tools:ignore="ResourceName">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/common_widget_toolbar_divider_color</item>
+    </style>
+
+    <style name="CommonDivider" tools:ignore="ResourceName">
+        <item name="android:layout_height">@dimen/common_widget_divider_height</item>
+        <item name="android:background">@color/common_widget_toolbar_divider_color</item>
+    </style>
+
+    <style name="common_widget_toolbar_left_button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/common_widget_toolbar_height</item>
+        <item name="buttonPadding">@dimen/common_widget_toolbar_title_text_icon_button_padding
+        </item>
+        <item name="buttonTextColor">@color/common_widget_toolbar_button_color_C3_2</item>
+        <item name="buttonTextSize">@dimen/common_widget_toolbar_title_button_text_size</item>
+        <item name="android:layout_marginStart">@dimen/common_widget_toolbar_button_left_padding
+        </item>
+    </style>
+
+    <style name="common_widget_toolbar_right_button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/common_widget_toolbar_height</item>
+        <item name="buttonPadding">@dimen/common_widget_toolbar_title_text_icon_button_padding
+        </item>
+        <item name="buttonTextColor">@color/common_widget_toolbar_button_color_C3_2</item>
+        <item name="buttonTextSize">@dimen/common_widget_toolbar_title_button_text_size</item>
+        <item name="android:layout_marginRight">@dimen/common_widget_toolbar_button_left_padding
+        </item>
+    </style>
+</resources>

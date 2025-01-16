@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <declare-styleable name="ToolbarButton" tools:ignore="ResourceName">
+        <attr name="buttonText" format="reference|string" />
+        <attr name="buttonTextSize" format="reference" />
+        <attr name="buttonPadding" format="reference" />
+        <attr name="buttonTextColor" format="reference" />
+        <attr name="buttonIcon" format="reference" />
+        <attr name="Visibility" format="reference">
+            <enum name="VISIBLE" value="0x00000000" />
+            <enum name="INVISIBLE" value="0x00000004" />
+            <enum name="GONE" value="0x00000008" />
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="CommonToolBar" tools:ignore="ResourceName">
+        <attr name="titleText" format="integer|string" />
+        <attr name="titleColor" format="color" />
+        <attr name="titleBold" format="boolean" />
+        <attr name="titleCenter" format="boolean" />
+        <attr name="toolbarBackground" format="reference|color" />
+        <attr name="titleSize" format="reference|dimension" />
+        <attr name="leftFirstIcon" format="reference|color" />
+        <attr name="leftFirstBtnIsShown" format="boolean" />
+        <attr name="leftFirstText" format="reference|string" />
+        <attr name="leftBtnColor" format="color" />
+        <attr name="leftSecondIcon" format="reference|color" />
+        <attr name="leftSecondText" format="reference|string" />
+        <attr name="rightFirstIcon" format="reference|color" />
+        <attr name="rightFirstText" format="reference|string" />
+        <attr name="rightSecondIcon" format="reference|color" />
+        <attr name="rightSecondText" format="reference|string" />
+        <attr name="rightBtnColor" format="color" />
+        <attr name="dividerIsShown" format="boolean" />
+        <attr name="btnTextSize" format="reference|dimension" />
+    </declare-styleable>
+
+</resources>

@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:width="24dp"
+        android:height="24dp"
+        android:viewportWidth="24.0"
+        android:viewportHeight="24.0"
+    tools:ignore="ResourceName">
+    <path
+        android:pathData="M12,11.292L19.146,4.147C19.341,3.951 19.658,3.951 19.853,4.147C20.049,4.342 20.049,4.659 19.853,4.854L12.708,12L19.853,19.146C20.049,19.341 20.049,19.658 19.853,19.853C19.658,20.049 19.341,20.049 19.146,19.853L12,12.708L4.854,19.853C4.659,20.049 4.342,20.049 4.147,19.853C3.951,19.658 3.951,19.341 4.147,19.146L11.292,12L4.147,4.854C3.951,4.659 3.951,4.342 4.147,4.147C4.342,3.951 4.659,3.951 4.854,4.147L12,11.292Z"
+        android:strokeColor="#00000000"
+        android:fillType="evenOdd"
+        android:fillColor="@color/common_widget_toolbar_button_color_C3_2"
+        android:strokeWidth="1"/>
+</vector>
