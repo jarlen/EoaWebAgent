@@ -15,13 +15,11 @@ import cn.jarlen.richcommon.jwebview.entity.NativeCall2JsBean;
 
 
 /**
- * @author Administrator
+ * @author jarlen
  * @date 2016/4/10
  */
 public class JsBridge2Native {
     public static final String BRIDGE_NAME = "JBridge";
-    private static final String JS_METHOD_CONFIG = "config";
-    private static final String JS_METHOD_INIT_CONFIG = "initConfig";
     private final FragmentActivity currentActivity;
     private final WeakReference<IWebView> webViewWeakReference;
     private Gson gson = new Gson();
@@ -50,7 +48,13 @@ public class JsBridge2Native {
                     iWebView.callJs(NativeCall2JsBean.createError(NativeCall2JsBean.ErrorCode.ERROR_INVALID_PARAM, ""));
                     return;
                 }
-
+                /*查找到对应方法的处理器*/
+                JSHandler jsHandler = JSHandlerFactory.getJSHandler(paramBean.getMethod());
+                if (jsHandler == null) {
+                    iWebView.callJs(NativeCall2JsBean.createError(NativeCall2JsBean.ErrorCode.ERROR_NOT_SUPPORT_METHOD, paramBean.getMethod()));
+                    return;
+                }
+                jsHandler.handle(currentActivity, iWebView, paramBean);
             }
         });
     }

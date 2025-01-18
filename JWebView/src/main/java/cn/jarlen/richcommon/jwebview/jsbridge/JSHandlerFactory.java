@@ -15,4 +15,19 @@ public class JSHandlerFactory {
         jsHandlerMap.put("registerEvent", AddEventListenerHandler.class);
     }
 
+    public static JSHandler getJSHandler(String jsHandlerName) {
+        if (jsHandlerMap.isEmpty()) {
+            initJsHandler();
+        }
+        Class<? extends JSHandler> jsHandlerClass = jsHandlerMap.get(jsHandlerName);
+        if (jsHandlerClass != null) {
+            try {
+                return jsHandlerClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
 }
