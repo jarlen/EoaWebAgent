@@ -34,10 +34,6 @@ public interface IWebView<D> {
      */
     boolean addEventListener(String event);
 
-    void setMenu(List<MenuItemBean> menuItems);
-
-    void setRightButtonVisibility(int location, int visibility);
-
     WebView getWebView();
 
     /**

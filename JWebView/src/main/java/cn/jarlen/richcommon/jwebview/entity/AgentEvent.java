@@ -2,19 +2,24 @@ package cn.jarlen.richcommon.jwebview.entity;
 
 public enum AgentEvent {
 
-    EVENT_ACTIVITY_RESUME("onResume", "Activity恢复展示"),
-    EVENT_ACTIVITY_PAUSE("onPause", "Activity暂停展示"),
-    EVENT_WEB_CLOSE("onWebClose", "Web page close");
+    EVENT_PAGE_SHOW("onPageShow", "Activity恢复展示"),
+    EVENT_PAGE_HIDE("onPageHide", "Activity暂停展示"),
+    EVENT_PUSH_MSG_TO_PAGE("receiveMsg", "receive message from native"),
+    EVENT_PAGE_RELEASE("onPageRelease", "Web page close");
 
-    private String eventName;
-    private String eventDesc;
+    private String event;
+    private String desc;
 
-    AgentEvent(String eventName, String eventDesc) {
-        this.eventName = eventName;
-        this.eventDesc = eventDesc;
+    AgentEvent(String eventName, String desc) {
+        this.event = eventName;
+        this.desc = desc;
     }
 
-    public String getEventName() {
-        return eventName;
+    public String getEvent() {
+        return event;
+    }
+
+    public boolean equals(String event) {
+        return this.event.equals(event);
     }
 }

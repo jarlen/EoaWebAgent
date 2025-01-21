@@ -1,7 +1,13 @@
 package cn.jarlen.richcommon.jwebview;
 
+import static cn.jarlen.richcommon.jwebview.entity.AgentEvent.EVENT_PAGE_HIDE;
+import static cn.jarlen.richcommon.jwebview.entity.AgentEvent.EVENT_PAGE_RELEASE;
+import static cn.jarlen.richcommon.jwebview.entity.AgentEvent.EVENT_PAGE_SHOW;
+import static cn.jarlen.richcommon.jwebview.entity.AgentEvent.EVENT_PUSH_MSG_TO_PAGE;
+
 import android.app.Activity;
 import android.util.ArrayMap;
+import android.view.View;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.ValueCallback;
@@ -12,13 +18,13 @@ import com.google.gson.Gson;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import cn.jarlen.richcommon.jwebview.client.AbsJsInterfaceHolderImpl;
 import cn.jarlen.richcommon.jwebview.client.IWebView;
 import cn.jarlen.richcommon.jwebview.client.JsInterfaceHolder;
+import cn.jarlen.richcommon.jwebview.entity.AgentEvent;
 import cn.jarlen.richcommon.jwebview.entity.NativeCall2JsBean;
 import cn.jarlen.richcommon.jwebview.entity.location.GpsLocationResult;
 import cn.jarlen.richcommon.jwebview.entity.toolbar.ChangeToolbarParams;
@@ -33,13 +39,6 @@ public class WebAgent implements IWebView {
 
     /*Begin: 注册事件集合*/
     private Set<String> eventSet = new HashSet<>();
-    private static final String EVENT_BACK = "onBack";
-    private static final String EVENT_MENU_CLICK = "onMenuClick";
-    private static final String EVENT_ON_RESUME = "onResume";
-    private static final String EVENT_ON_PAUSE = "onPause";
-    private static final String EVENT_RECEIVE_PUSH_MSG = "receivePushMsg";
-    private static final String EVENT_ON_WEB_CLOSE = "onWebClose";
-    private static final String EVENT_RECEIVE_LOCATION = "onReceiveLocation";
     /*End: 注册事件集合*/
 
     private Gson gson = new Gson();
@@ -65,6 +64,8 @@ public class WebAgent implements IWebView {
 
     private IWebViewSettings webViewSettings;
 
+    /*缓存当前出现错误的页面*/
+    private Set<String> mErrorUrlsSet = new HashSet<>();
     private String mCurrentUrl;
 
     public WebAgent(Activity activity) {
@@ -142,57 +143,75 @@ public class WebAgent implements IWebView {
 
     @Override
     public boolean addEventListener(String event) {
+        if (isSupportEvent(event)) {
+            eventSet.add(event);
+            return true;
+        }
         return false;
     }
 
     @Override
-    public void setRightButtonVisibility(int location, int visibility) {
-
-    }
-
-    @Override
     public WebView getWebView() {
-        return null;
+        return currentWebView;
     }
 
     @Override
     public void onReceivePushMsg(String pushMsg) {
-
+        sendEvent(EVENT_PUSH_MSG_TO_PAGE, pushMsg);
     }
 
     @Override
     public void onResume() {
-
+        sendEvent(EVENT_PAGE_SHOW, "");
+        if (currentWebView != null) {
+            currentWebView.onResume();
+        }
+        webViewLifeCycleManager.onResumed();
     }
 
     @Override
     public void onPause() {
-
+        sendEvent(EVENT_PAGE_HIDE, "");
+        if (currentWebView != null) {
+            currentWebView.onPause();
+        }
+        webViewLifeCycleManager.onPaused();
     }
 
     @Override
     public void onDestroy() {
-
+        if (currentWebView != null) {
+            currentWebView.destroy();
+        }
+        webViewLifeCycleManager.unRegisterAllLifecycleCallback();
     }
 
     @Override
     public void registerLifecycleCallbacks(WebViewLifecycleCallbacks lifecycle) {
-
+        webViewLifeCycleManager.registerLifecycleCallbacks(lifecycle);
     }
 
     @Override
     public void unRegisterLifecycleCallbacks(WebViewLifecycleCallbacks lifecycle) {
-
+        webViewLifeCycleManager.unRegisterLifecycleCallbacks(lifecycle);
     }
 
     @Override
     public void onPageStarted(WebView view, String url) {
-
+        this.mCurrentUrl = url;
     }
 
     @Override
     public void onPageFinished(WebView view, String url) {
-
+        this.mCurrentUrl = url;
+        if (!mErrorUrlsSet.contains(url)) {
+            onShowMainFrame();
+        } else {
+            view.setVisibility(View.VISIBLE);
+        }
+        if (!mErrorUrlsSet.isEmpty()) {
+            mErrorUrlsSet.clear();
+        }
     }
 
     @Override
@@ -232,7 +251,7 @@ public class WebAgent implements IWebView {
         if (mFrameListener != null && mFrameListener.isForceBackClose()) {
             return false;
         }
-        if (sendEvent(EVENT_BACK, "")) {
+        if (sendEvent(EVENT_PAGE_RELEASE, "")) {
             return true;
         }
         if (currentWebView.canGoBack()) {
@@ -315,16 +334,23 @@ public class WebAgent implements IWebView {
 
     }
 
-    @Override
-    public void setMenu(List menuItems) {
-
-    }
-
     private boolean sendEvent(String callback, Object result) {
         if (eventSet.contains(callback)) {
             callJs(NativeCall2JsBean.createEvent(callback, result));
             return true;
         }
         return false;
+    }
+
+    private boolean sendEvent(AgentEvent event, Object result) {
+        callJs(NativeCall2JsBean.createEvent(event.getEvent(), result));
+        return false;
+    }
+
+    private boolean isSupportEvent(String event) {
+        return EVENT_PAGE_RELEASE.equals(event)
+                || EVENT_PAGE_SHOW.equals(event)
+                || EVENT_PAGE_HIDE.equals(event)
+                || EVENT_PUSH_MSG_TO_PAGE.equals(event);
     }
 }
