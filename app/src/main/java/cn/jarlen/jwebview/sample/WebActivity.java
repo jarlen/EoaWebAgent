@@ -6,7 +6,7 @@ import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import cn.jarlen.richcommon.jwebview.MainFrameListener;
+import cn.jarlen.richcommon.jwebview.WebFrameIndicator;
 import cn.jarlen.richcommon.jwebview.WebAgent;
 import cn.jarlen.richcommon.jwebview.client.DefaultWebChromeClient;
 import cn.jarlen.richcommon.jwebview.client.DefaultWebViewClient;
@@ -57,7 +57,7 @@ public class WebActivity extends AppCompatActivity {
                 .setWebView(webView)
                 .setIndicatorView(webIndicator)
                 .addJsInterface(new JsBridge2Native(this, webAgent), JsBridge2Native.BRIDGE_NAME)
-                .setFrameListener(new MainFrameListener() {
+                .addFrameIndicator(new WebFrameIndicator(){
                     @Override
                     public void onMainFrameError(WebView view, int errorCode, String description, String failingUrl) {
 
@@ -71,11 +71,6 @@ public class WebActivity extends AppCompatActivity {
                     @Override
                     public boolean isForceBackClose() {
                         return false;
-                    }
-
-                    @Override
-                    public void onReceivedTitle(String title) {
-
                     }
                 })
                 .ready();

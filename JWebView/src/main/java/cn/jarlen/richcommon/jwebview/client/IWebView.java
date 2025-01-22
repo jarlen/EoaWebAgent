@@ -82,13 +82,6 @@ public interface IWebView<D> {
     String getCurrentUrl();
 
     /**
-     * 接收定位数据
-     *
-     * @param locationData
-     */
-    void onReceiveLocation(GpsLocationResult locationData);
-
-    /**
      * 设置toolbar标题
      *
      * @param title
@@ -96,13 +89,6 @@ public interface IWebView<D> {
     void setTitle(String title);
 
     void setHostAddress(Map<String, String> hostMap);
-
-    /**
-     * toolbar修改参数
-     *
-     * @param changeToolbarParams
-     */
-    void setToolBarStyle(ChangeToolbarParams changeToolbarParams);
 
     String getHostAddress(String hostKey);
 

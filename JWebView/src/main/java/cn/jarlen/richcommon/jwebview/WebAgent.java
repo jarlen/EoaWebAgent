@@ -13,6 +13,7 @@ import android.webkit.JsResult;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.google.gson.Gson;
 
@@ -26,11 +27,11 @@ import cn.jarlen.richcommon.jwebview.client.IWebView;
 import cn.jarlen.richcommon.jwebview.client.JsInterfaceHolder;
 import cn.jarlen.richcommon.jwebview.entity.AgentEvent;
 import cn.jarlen.richcommon.jwebview.entity.NativeCall2JsBean;
-import cn.jarlen.richcommon.jwebview.entity.location.GpsLocationResult;
-import cn.jarlen.richcommon.jwebview.entity.toolbar.ChangeToolbarParams;
 import cn.jarlen.richcommon.jwebview.lifecycle.WebViewLifeCycleManager;
 import cn.jarlen.richcommon.jwebview.lifecycle.WebViewLifecycleCallbacks;
 import cn.jarlen.richcommon.jwebview.settings.IWebViewSettings;
+import cn.jarlen.richcommon.jwebview.settings.WebClientConfig;
+import cn.jarlen.richcommon.jwebview.settings.WebSettings;
 import cn.jarlen.richcommon.jwebview.ui.IWebIndicator;
 import cn.jarlen.richcommon.jwebview.util.ThreadUtils;
 import cn.jarlen.richcommon.jwebview.util.WebUtil;
@@ -60,7 +61,7 @@ public class WebAgent implements IWebView {
     /*页面周期管理类*/
 
     /*界面结果监听*/
-    private MainFrameListener mFrameListener;
+    private WebFrameIndicator mFrameIndicator;
 
     private IWebViewSettings webViewSettings;
 
@@ -73,24 +74,67 @@ public class WebAgent implements IWebView {
         this.webViewLifeCycleManager = new WebViewLifeCycleManager();
     }
 
-    public WebAgent setWebViewSettings(IWebViewSettings webViewSettings) {
-        this.webViewSettings = webViewSettings;
-        return this;
+    public WebAgent(Builder builder) {
+        this.webViewLifeCycleManager = new WebViewLifeCycleManager();
+        this.activityWeakReference = new WeakReference<>(builder.activity);
+        this.currentWebView = builder.webView;
+
+        this.mFrameIndicator = builder.frameIndicator;
+        this.webIndicator = builder.webIndicator;
+        if (builder.webClientConfig != null){
+            WebSettings webSettings = new WebSettings(builder.webClientConfig.getWebViewClient(builder.activity, this),
+                    builder.webClientConfig.getWebChromeClient(builder.activity, this));
+            webSettings.toSetting(this.currentWebView);
+        }
     }
 
-    public WebAgent setIndicatorView(IWebIndicator webIndicator) {
-        this.webIndicator = webIndicator;
-        return this;
-    }
+    public class Builder {
 
-    public WebAgent setWebView(WebView webView) {
-        this.currentWebView = webView;
-        return this;
-    }
+        private Activity activity;
+        private WebView webView;
+        private IWebIndicator webIndicator;
+        private IWebViewSettings webViewSettings;
+        private WebFrameIndicator frameIndicator;
+        private WebClientConfig webClientConfig;
+        private boolean debugEnabled = false;
 
-    public WebAgent setFrameListener(MainFrameListener frameListener) {
-        this.mFrameListener = frameListener;
-        return this;
+        private Builder setActivity(Activity activity){
+            this.activity = activity;
+            return this;
+        }
+        public Builder setWebView(WebView webView) {
+            this.webView = webView;
+            return this;
+        }
+
+        public Builder setWebClientConfig(WebClientConfig webClientConfig) {
+            this.webClientConfig = webClientConfig;
+            return this;
+        }
+
+        public Builder setWebViewSettings(IWebViewSettings webViewSettings) {
+            this.webViewSettings = webViewSettings;
+            return this;
+        }
+
+        public Builder setWebIndicator(IWebIndicator webIndicator) {
+            this.webIndicator = webIndicator;
+            return this;
+        }
+
+        public Builder setFrameIndicator(WebFrameIndicator frameIndicator) {
+            this.frameIndicator = frameIndicator;
+            return this;
+        }
+
+        public Builder setDebugEnabled(boolean enabled) {
+            this.debugEnabled = enabled;
+            return this;
+        }
+
+        public WebAgent build() {
+            return new WebAgent(this);
+        }
     }
 
     public WebAgent setQuickCloseWeb(boolean quickCloseWeb) {
@@ -248,7 +292,7 @@ public class WebAgent implements IWebView {
 
     @Override
     public boolean back() {
-        if (mFrameListener != null && mFrameListener.isForceBackClose()) {
+        if (mFrameIndicator != null && mFrameIndicator.isForceBackClose()) {
             return false;
         }
         if (sendEvent(EVENT_PAGE_RELEASE, "")) {
@@ -268,10 +312,10 @@ public class WebAgent implements IWebView {
 
     @Override
     public void onShowMainFrame() {
-        if (mFrameListener == null) {
+        if (mFrameIndicator == null) {
             return;
         }
-        mFrameListener.onShowMainFrame();
+        mFrameIndicator.onShowMainFrame();
     }
 
     @Override
@@ -285,17 +329,7 @@ public class WebAgent implements IWebView {
     }
 
     @Override
-    public void onReceiveLocation(GpsLocationResult locationData) {
-
-    }
-
-    @Override
     public void setTitle(String title) {
-
-    }
-
-    @Override
-    public void setToolBarStyle(ChangeToolbarParams changeToolbarParams) {
 
     }
 
@@ -306,22 +340,22 @@ public class WebAgent implements IWebView {
 
     @Override
     public boolean onClientJsAlert(String url, String message, JsResult result) {
-        return false;
+        return mFrameIndicator != null ? mFrameIndicator.onClientJsAlert(url, message, result) : Boolean.FALSE;
     }
 
     @Override
     public boolean onClientJsConfirm(String url, String message, JsResult result) {
-        return mFrameListener != null ? mFrameListener.onClientJsConfirm(url, message, result) : Boolean.FALSE;
+        return mFrameIndicator != null ? mFrameIndicator.onClientJsConfirm(url, message, result) : Boolean.FALSE;
     }
 
     @Override
     public boolean onClientJsPrompt(String url, String message, String defaultValue, JsPromptResult result) {
-        return mFrameListener != null ? mFrameListener.onClientJsPrompt(url, message, defaultValue, result) : Boolean.FALSE;
+        return mFrameIndicator != null ? mFrameIndicator.onClientJsPrompt(url, message, defaultValue, result) : Boolean.FALSE;
     }
 
     @Override
     public boolean onClientShowFileChooser(ValueCallback valueCallbacks, WebChromeClient.FileChooserParams fileChooserParams) {
-        return mFrameListener != null ? mFrameListener.onClientShowFileChooser(valueCallbacks, fileChooserParams) : Boolean.FALSE;
+        return mFrameIndicator != null ? mFrameIndicator.onClientShowFileChooser(valueCallbacks, fileChooserParams) : Boolean.FALSE;
     }
 
     @Override
