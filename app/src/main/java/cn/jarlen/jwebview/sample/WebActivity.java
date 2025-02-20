@@ -11,7 +11,6 @@ import cn.jarlen.richcommon.jwebview.WebAgent;
 import cn.jarlen.richcommon.jwebview.client.DefaultWebChromeClient;
 import cn.jarlen.richcommon.jwebview.client.DefaultWebViewClient;
 import cn.jarlen.richcommon.jwebview.jsbridge.JsBridge2Native;
-import cn.jarlen.richcommon.jwebview.settings.WebSettings;
 import cn.jarlen.richcommon.jwebview.ui.DefaultWebIndicator;
 import cn.jarlen.richcommon.util.AndroidBug5497Workaround;
 import cn.jarlen.richcommon.util.StatusBarUtil;

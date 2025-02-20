@@ -13,7 +13,6 @@ import android.webkit.JsResult;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.google.gson.Gson;
 
@@ -31,7 +30,6 @@ import cn.jarlen.richcommon.jwebview.lifecycle.WebViewLifeCycleManager;
 import cn.jarlen.richcommon.jwebview.lifecycle.WebViewLifecycleCallbacks;
 import cn.jarlen.richcommon.jwebview.settings.IWebViewSettings;
 import cn.jarlen.richcommon.jwebview.settings.WebClientConfig;
-import cn.jarlen.richcommon.jwebview.settings.WebSettings;
 import cn.jarlen.richcommon.jwebview.ui.IWebIndicator;
 import cn.jarlen.richcommon.jwebview.util.ThreadUtils;
 import cn.jarlen.richcommon.jwebview.util.WebUtil;
@@ -78,9 +76,13 @@ public class WebAgent implements IWebView {
         this.webViewLifeCycleManager = new WebViewLifeCycleManager();
         this.activityWeakReference = new WeakReference<>(builder.activity);
         this.currentWebView = builder.webView;
-
         this.mFrameIndicator = builder.frameIndicator;
         this.webIndicator = builder.webIndicator;
+
+        if (builder.webClientConfig == null){
+            
+        }
+
         if (builder.webClientConfig != null){
             WebSettings webSettings = new WebSettings(builder.webClientConfig.getWebViewClient(builder.activity, this),
                     builder.webClientConfig.getWebChromeClient(builder.activity, this));
